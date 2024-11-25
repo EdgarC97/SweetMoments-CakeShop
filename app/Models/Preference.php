@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Preference extends Model
 {
-    //
+    protected $fillable = ['client_id', 'preference', 'quantity', 'created_at'];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }
