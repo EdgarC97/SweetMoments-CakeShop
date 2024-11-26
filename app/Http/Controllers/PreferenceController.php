@@ -2,57 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PreferenceRequest;
 use App\Models\Preference;
-use Illuminate\Http\Request;
+use App\Models\Client;
 
 class PreferenceController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PreferenceRequest $request, Client $client)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Preference $preference)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Preference $preference)
-    {
-        //
+        // Creamos la preferencia para el cliente específico
+        $client->clientPreferences()->create($request->validated());
+        return redirect()->route('clients.show', $client)->with('success', 'Preferencia agregada correctamente.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Preference $preference)
+    public function update(PreferenceRequest $request, Preference $preference)
     {
-        //
+        $preference->update($request->validated());
+        return redirect()->route('clients.show', $preference->client_id)->with('success', 'Preferencia actualizada correctamente.');
     }
 
     /**
@@ -60,6 +32,7 @@ class PreferenceController extends Controller
      */
     public function destroy(Preference $preference)
     {
-        //
+        $preference->delete();
+        return redirect()->route('clients.show', $preference->client_id)->with('success', 'Preferencia eliminada correctamente.');
     }
 }

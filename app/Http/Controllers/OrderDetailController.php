@@ -2,57 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderDetailRequest;
 use App\Models\OrderDetail;
-use Illuminate\Http\Request;
 
 class OrderDetailController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrderDetailRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(OrderDetail $orderDetail)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(OrderDetail $orderDetail)
-    {
-        //
+        OrderDetail::create($request->validated());
+        return redirect()->route('orders.show', $request->order_id)->with('success', 'Detalle del pedido agregado correctamente.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, OrderDetail $orderDetail)
+    public function update(OrderDetailRequest $request, OrderDetail $orderDetail)
     {
-        //
+        $orderDetail->update($request->validated());
+        return redirect()->route('orders.show', $orderDetail->order_id)->with('success', 'Detalle del pedido actualizado correctamente.');
     }
 
     /**
@@ -60,6 +30,7 @@ class OrderDetailController extends Controller
      */
     public function destroy(OrderDetail $orderDetail)
     {
-        //
+        $orderDetail->delete();
+        return redirect()->route('orders.show', $orderDetail->order_id)->with('success', 'Detalle del pedido eliminado correctamente.');
     }
 }

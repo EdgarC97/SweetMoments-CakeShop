@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderRequest;
 use App\Models\Order;
-use Illuminate\Http\Request;
+
 
 class OrderController extends Controller
 {
@@ -12,7 +13,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::with('client')->get();
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -20,15 +22,16 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        return view('orders.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrderRequest $request)
     {
-        //
+        Order::create($request->validated());
+        return redirect()->route('orders.index')->with('success', 'Pedido creado correctamente.');
     }
 
     /**
@@ -36,7 +39,7 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        //
+        return view('orders.show', compact('order'));
     }
 
     /**
@@ -44,15 +47,16 @@ class OrderController extends Controller
      */
     public function edit(Order $order)
     {
-        //
+        return view('orders.edit', compact('order'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Order $order)
+    public function update(OrderRequest $request, Order $order)
     {
-        //
+        $order->update($request->validated());
+        return redirect()->route('orders.index')->with('success', 'Pedido actualizado correctamente.');
     }
 
     /**
@@ -60,6 +64,7 @@ class OrderController extends Controller
      */
     public function destroy(Order $order)
     {
-        //
+        $order->delete();
+        return redirect()->route('orders.index')->with('success', 'Pedido eliminado correctamente.');
     }
 }
