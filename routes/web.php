@@ -5,7 +5,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDetailController;
 use App\Http\Controllers\PreferenceController;
-use App\Http\Controllers\ProductController; // Añadimos el ProductController
+use App\Http\Controllers\ProductController; 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,5 +52,5 @@ Route::resource('preferences', PreferenceController::class)
 Route::resource('products', ProductController::class)
     ->except(['create', 'edit']); // De nuevo, excluimos los formularios de creación y edición separados
 
-// Rutas de autenticación (mantienes lo que ya tenías)
+// Rutas de autenticación
 require __DIR__.'/auth.php';
