@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('preferences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade'); // Relación con clients
-            $table->string('preference_type');
-            $table->text('details');
-            $table->timestamps();
+            $table->string('preference'); // Actualizado de 'preference_type'
+            $table->integer('quantity'); // Si es que necesitas cantidad, de lo contrario elimina esta línea.
+            $table->timestamps(); // timestamps generados automáticamente para 'created_at' y 'updated_at'
         });
     }
 
