@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
+use Inertia\Inertia;
 
 class ClientController extends Controller
 {
@@ -13,7 +14,7 @@ class ClientController extends Controller
     public function index()
     {
         $clients = Client::all();
-        return view('clients.index', compact('clients'));
+        return Inertia::render('clients.index', compact('clients'));
     }
 
     /**

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
-
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
@@ -14,7 +14,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::with('client')->get();
-        return view('orders.index', compact('orders'));
+        return Inertia::render('orders.index', compact('orders'));
     }
 
     /**

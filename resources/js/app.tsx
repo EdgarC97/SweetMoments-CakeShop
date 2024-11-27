@@ -1,4 +1,4 @@
-import '../css/app.css';
+import '../css/tailwind.css';
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/react';
