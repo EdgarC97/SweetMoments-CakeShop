@@ -20,7 +20,7 @@ class Order extends Model
 
     // Defining possible order statuses as constants
     const STATUS_PENDING = 'pending';
-    const STATUS_IN_PROGRESS = 'in_progress';
+    const STATUS_IN_PROGRESS = 'in progress';
     const STATUS_READY = 'ready';
     const STATUS_DELIVERED = 'delivered';
 }   

@@ -23,11 +23,15 @@
 
     // Dashboard
     Route::get('/dashboard', function () {
-        $orders = Order::all();
+        // Traemos todas las órdenes con los datos necesarios
+        $orders = Order::select('id', 'client_id', 'order_date', 'delivery_date', 'status', 'notes')
+            ->with('client:id,name') // Incluye solo los campos que necesites del cliente
+            ->get();
+
         return Inertia::render('Dashboard', [
-            'orders' => $orders
+            'orders' => $orders,
         ]);
-    })->middleware(['auth', 'verified'])->name('dashboard');
+    })->name('dashboard');
 
     // Rutas del perfil (ya están definidas en tu código)
     Route::middleware('auth')->group(function () {
