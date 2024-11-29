@@ -1,24 +1,22 @@
-import '../css/tailwind.css';
 import './bootstrap';
+import '../css/tailwind.css';
 
+import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createRoot } from 'react-dom/client';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => {
-        const pages = import.meta.glob('./Pages/**/*.tsx', { eager: true })
-        return pages[`./Pages/${name}.tsx`]
-    },
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.tsx`, import.meta.glob('./Pages/**/*.tsx')),
     setup({ el, App, props }) {
-        console.log('Inertia App Cargando', props);
-        createRoot(el).render(<App {...props} />);
+        const root = createRoot(el);
+        root.render(<App {...props} />);
     },
     progress: {
         color: '#4B5563',
     },
 });
+
 
