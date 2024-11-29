@@ -14,7 +14,9 @@ class ClientController extends Controller
     public function index()
     {
         $clients = Client::all();
-        return Inertia::render('clients.index', compact('clients'));
+        return Inertia::render('clients/index', [
+            'clients' => $clients
+        ]);
     }
 
     /**

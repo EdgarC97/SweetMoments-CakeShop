@@ -1,6 +1,7 @@
+// resources/js/Pages/clients/index.tsx
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout'; 
 
 interface Client {
   id: number;
@@ -14,7 +15,7 @@ interface ClientsIndexProps {
 
 const ClientsIndex: React.FC<ClientsIndexProps> = ({ clients }) => {
   return (
-    <AuthenticatedLayout>
+    <DashboardLayout>
       <Head title="Clientes" />
       <div className="py-6">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">Lista de Clientes</h1>
@@ -27,7 +28,7 @@ const ClientsIndex: React.FC<ClientsIndexProps> = ({ clients }) => {
           ))}
         </div>
       </div>
-    </AuthenticatedLayout>
+    </DashboardLayout>
   );
 };
 

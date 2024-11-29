@@ -1,6 +1,6 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import Layout from '@/Layouts/DashboardLayout';
+import DashboardLayout from '@/Layouts/DashboardLayout';
 import Statistics from '@/Components/Statistics';
 import OrderCalendar from '@/Components/OrderCalendar';
 import PriorityOrders from '@/Components/PriorityOrders';
@@ -45,13 +45,13 @@ export default function Dashboard({ orders }: DashboardProps) {
   ];
 
   return (
-    <Layout>
+    <DashboardLayout>
       <Head title="Dashboard - Sweet Moments" />
       
       <div className="p-6 space-y-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-2xl font-montserrat text-center text-gray-800 dark:text-gray-200 mb-6">
-            Control Panel
+            Dashboard
           </h1>
 
           {/* Statistics */}
@@ -84,7 +84,7 @@ export default function Dashboard({ orders }: DashboardProps) {
           </div>
         </div>
       </div>
-    </Layout>
+    </DashboardLayout>
   );
 }
 
