@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
 use App\Models\Product;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -12,35 +11,62 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        Log::info('Products retrieved:', ['count' => $products->count(), 'products' => $products->toArray()]);
-        return Inertia::render('products/index', [
-            'products' => $products
-        ]);
+        return Inertia::render('products/index', ['products' => $products]);
     }
 
-    public function store(ProductRequest $request)
+    public function create()
     {
-        $product = Product::create($request->validated());
-        return redirect()->route('products.index')->with('success', 'Producto creado correctamente.');
+        return Inertia::render('Products/Create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'size' => 'nullable|string|max:255',
+            'ingredients' => 'nullable|string',
+            'category' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
+        ]);
+
+        Product::create($validated);
+
+        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
     }
 
     public function show(Product $product)
     {
-        return Inertia::render('products/show', [
-            'product' => $product
-        ]);
+        return Inertia::render('Products/Show', ['product' => $product]);
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function edit(Product $product)
     {
-        $product->update($request->validated());
-        return redirect()->route('products.index')->with('success', 'Producto actualizado correctamente.');
+        return Inertia::render('Products/Edit', ['product' => $product]);
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'size' => 'nullable|string|max:255',
+            'ingredients' => 'nullable|string',
+            'category' => 'nullable|string|max:255',
+            'stock' => 'required|integer|min:0',
+        ]);
+
+        $product->update($validated);
+
+        return redirect()->route('products.index')->with('success', 'Producto actualizado exitosamente.');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Producto eliminado correctamente.');
+        return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente.');
     }
 }
 

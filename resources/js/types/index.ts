@@ -17,6 +17,7 @@ export interface Product {
   price: number;
   size: string;
   ingredients: string;
+  category: string;
 }
 
 export interface Client {
