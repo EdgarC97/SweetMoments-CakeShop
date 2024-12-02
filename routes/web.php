@@ -82,7 +82,7 @@
 
     // Rutas para los productos (ProductController)
     Route::resource('products', ProductController::class)
-        ->except(['create', 'show' ,'edit'])  
+        ->except(['create', 'show', 'edit'])
         ->names([
             'index' => 'products.index',
             'show' => 'products.show',
@@ -90,6 +90,9 @@
             'update' => 'products.update',
             'destroy' => 'products.destroy',
         ]);
+
+    Route::resource('clients', ClientController::class);
+    Route::resource('orders', OrderController::class);
 
     // Rutas de autenticación
     require __DIR__ . '/auth.php';
