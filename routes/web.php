@@ -82,7 +82,7 @@
 
     // Rutas para los productos (ProductController)
     Route::resource('products', ProductController::class)
-        ->except(['create', 'edit'])  // Excluimos los formularios de creación y edición
+        ->except(['create', 'show' ,'edit'])  
         ->names([
             'index' => 'products.index',
             'show' => 'products.show',

@@ -11,12 +11,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return Inertia::render('products/index', ['products' => $products]);
-    }
-
-    public function create()
-    {
-        return Inertia::render('Products/Create');
+        return Inertia::render('Products/ProductsIndex', ['products' => $products]);
     }
 
     public function store(Request $request)
@@ -31,19 +26,9 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
-        Product::create($validated);
+        $product = Product::create($validated);
 
-        return redirect()->route('products.index')->with('success', 'Producto creado exitosamente.');
-    }
-
-    public function show(Product $product)
-    {
-        return Inertia::render('Products/Show', ['product' => $product]);
-    }
-
-    public function edit(Product $product)
-    {
-        return Inertia::render('Products/Edit', ['product' => $product]);
+        return response()->json($product);
     }
 
     public function update(Request $request, Product $product)
@@ -60,13 +45,12 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('products.index')->with('success', 'Producto actualizado exitosamente.');
+        return response()->json($product);
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Producto eliminado exitosamente.');
+        return response()->json(['success' => true]);
     }
 }
-

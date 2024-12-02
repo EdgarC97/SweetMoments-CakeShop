@@ -15,9 +15,10 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  size: string;
-  ingredients: string;
+  size: string | null;
+  ingredients: string | null;
   category: string;
+  stock: number;
 }
 
 export interface Client {
