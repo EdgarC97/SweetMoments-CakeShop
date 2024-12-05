@@ -11,25 +11,18 @@
     use Illuminate\Support\Facades\Route;
     use Inertia\Inertia;
 
-    // Página principal
     Route::get('/', function () {
-        return Inertia::render('Welcome', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-        ]);
-    })->name('welcome');
-
-    // Dashboard
-    Route::get('/dashboard', function () {
         // Traemos todas las órdenes con los datos necesarios
         $orders = Order::select('id', 'client_id', 'order_date', 'delivery_date', 'status', 'notes')
             ->with('client:id,name') // Incluye solo los campos que necesites del cliente
             ->get();
-
+    
         return Inertia::render('Dashboard', [
             'orders' => $orders,
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
         ]);
     })->name('dashboard');
 
