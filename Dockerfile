@@ -37,8 +37,11 @@ RUN composer install --no-interaction --no-dev --prefer-dist
 RUN npm ci
 RUN npm run build
 
+# Create .env file from .env.example
+RUN cp .env.example .env
+
 # Generate application key
-RUN php artisan key:generate
+RUN php artisan key:generate --force
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
@@ -46,3 +49,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
+
