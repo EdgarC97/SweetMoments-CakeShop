@@ -1,7 +1,7 @@
-# Usamos una imagen base con PHP
+# Use PHP 8.3 FPM as the base image
 FROM php:8.3-fpm
 
-# Instalar dependencias necesarias para PHP
+# Install necessary dependencies for PHP and the project
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -11,43 +11,39 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libicu-dev \
     curl \
+    nginx \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd zip intl pdo pdo_mysql
 
-# Instalar NGINX
-RUN apt-get install -y nginx
-
-# Configuración de directorios
+# Set the working directory
 WORKDIR /var/www
 
-# Copiar el código fuente
+# Copy the source code
 COPY . .
 
-# Instalar Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Instalar dependencias de Composer
+# Install Composer dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Instalar dependencias de npm
+# Install Node.js and npm
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-RUN npm install
+# Install npm dependencies and build assets
+RUN npm install && npm run build
 
-# Ejecutar Vite para compilar assets
-RUN npm run build
-
-# Copiar la configuración de NGINX al contenedor
+# Copy NGINX configuration
 COPY nginx/default.conf /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
-# Asegurarse de que los directorios 'storage' y 'bootstrap/cache' tengan los permisos adecuados
-# Asegurarse de que www-data tenga permisos de lectura y escritura en esos directorios
+# Set proper permissions for Laravel directories
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Exponer el puerto 80
+# Expose port 80
 EXPOSE 80
 
-# Iniciar NGINX y PHP-FPM en el contenedor
+# Start NGINX and PHP-FPM
 CMD service nginx start && php-fpm
