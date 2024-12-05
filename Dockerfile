@@ -1,58 +1,52 @@
-# Usamos una imagen base con PHP
+# Use an official PHP runtime as a parent image
 FROM php:8.3-fpm
 
-# Instalar dependencias necesarias para PHP
-RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    git \
-    libzip-dev \
-    unzip \
-    libicu-dev \
-    curl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd zip intl pdo pdo_mysql
-
-# Instalar NGINX
-RUN apt-get install -y nginx
-
-# Configuración de directorios
+# Set working directory
 WORKDIR /var/www/html
 
-# Copiar el código fuente
-COPY . .
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-# Instalar Composer
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_23.x | bash -
+RUN apt-get install -y nodejs
 
-# Instalar Node.js y npm
-RUN curl -sL https://deb.nodesource.com/setup_23.x | bash - \
-    && apt-get install -y nodejs
+# Copy application files
+COPY . .
 
-# Instalar dependencias de npm
+# Install PHP dependencies
+RUN composer install --no-interaction --no-dev --prefer-dist
+
+# Install Node.js dependencies
 RUN npm ci
-
-# Ejecutar Vite para compilar assets
 RUN npm run build
 
-# Copiar la configuración de NGINX al contenedor
-COPY nginx/default.conf /etc/nginx/sites-available/default
+# Create .env file from .env.example
+RUN cp .env.example .env
 
-# Crear .env file desde .env.example si no existe
-RUN if [ ! -f .env ]; then cp .env.example .env; fi
-
-# Generar clave de aplicación
+# Generate application key
 RUN php artisan key:generate --force
 
-# Asegurarse de que los directorios 'storage' y 'bootstrap/cache' tengan los permisos adecuados
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponer el puerto 80
+# Expose port 80 and start php-fpm server
 EXPOSE 80
 
 # Iniciar NGINX y PHP-FPM en el contenedor
