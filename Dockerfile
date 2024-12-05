@@ -1,53 +1,48 @@
-# Usamos una imagen base con PHP
-FROM php:8.2-fpm
+# Use an official PHP runtime as a parent image
+FROM php:8.3-fpm
 
-# Instalar dependencias necesarias para PHP
+# Set working directory
+WORKDIR /var/www/html
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
     git \
-    libzip-dev \
-    unzip \
-    libicu-dev \
     curl \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd zip intl pdo pdo_mysql
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip
 
-# Instalar NGINX
-RUN apt-get install -y nginx
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Configuración de directorios
-WORKDIR /var/www
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Copiar el código fuente
-COPY . .
-
-# Instalar Composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Instalar dependencias de Composer
-RUN composer install --no-dev --optimize-autoloader
+# Install Node.js and npm
+RUN curl -sL https://deb.nodesource.com/setup_23.x | bash -
+RUN apt-get install -y nodejs
 
-# Instalar dependencias de npm
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Copy application files
+COPY . .
 
-RUN npm install
+# Install PHP dependencies
+RUN composer install --no-interaction --no-dev --prefer-dist
 
-# Ejecutar Vite para compilar assets
+# Install Node.js dependencies
+RUN npm ci
 RUN npm run build
 
-# Copiar la configuración de NGINX al contenedor
-COPY nginx/default.conf /etc/nginx/sites-available/default
+# Generate application key
+RUN php artisan key:generate
 
-# Asegurarse de que los directorios 'storage' y 'bootstrap/cache' tengan los permisos adecuados
-# Asegurarse de que www-data tenga permisos de lectura y escritura en esos directorios
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Exponer el puerto 80
-EXPOSE 80
-
-# Iniciar NGINX y PHP-FPM en el contenedor
-CMD service nginx start && php-fpm
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
