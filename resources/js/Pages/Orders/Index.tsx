@@ -34,19 +34,19 @@ const Index: React.FC<OrdersIndexProps> = ({ orders }) => {
                       </p>
                       <div className="ml-2 flex-shrink-0 flex">
                         <Link
-                          href={route('orders.index', { id: order.id })} // Changed from 'orders.show' to 'orders.index'
+                          href={route('orders.index', { id: order.id })} 
                           className="mr-2 text-blue-600 hover:text-blue-900"
                         >
                           <EyeIcon className="h-5 w-5" />
                         </Link>
                         <Link
-                          href={route('orders.index', { id: order.id })} // Changed from 'orders.edit' to 'orders.index'
+                          href={route('orders.index', { id: order.id })} 
                           className="mr-2 text-indigo-600 hover:text-indigo-900"
                         >
                           <PencilIcon className="h-5 w-5" />
                         </Link>
                         <Link
-                          href={route('orders.index', { id: order.id })} // Changed from 'orders.destroy' to 'orders.index'
+                          href={route('orders.index', { id: order.id })} 
                           method="delete"
                           as="button"
                           className="text-red-600 hover:text-red-900"

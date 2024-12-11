@@ -16,41 +16,41 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'size' => 'nullable|string|max:255',
             'ingredients' => 'nullable|string',
-            'category' => 'nullable|string|max:255',
+            'category' => 'required|string|max:255',
             'stock' => 'required|integer|min:0',
         ]);
 
-        $product = Product::create($validated);
+        $product = Product::create($validatedData);
 
-        return response()->json($product);
+        return Inertia::location(route('products.index'));
     }
-
     public function update(Request $request, Product $product)
     {
-        $validated = $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'size' => 'nullable|string|max:255',
             'ingredients' => 'nullable|string',
-            'category' => 'nullable|string|max:255',
+            'category' => 'required|string|max:255',
             'stock' => 'required|integer|min:0',
         ]);
 
-        $product->update($validated);
+        $product->update($validatedData);
 
-        return response()->json($product);
+        return Inertia::location(route('products.index'));
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return response()->json(['success' => true]);
+
+        return Inertia::location(route('products.index'));
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import { Product } from '@/types';
@@ -18,7 +18,9 @@ const ProductsIndex: React.FC<ProductsIndexProps> = ({ products: initialProducts
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const { delete: destroy } = useForm();
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
 
   const formatPrice = (price: number | string | null): string => {
     if (typeof price === 'number') {
@@ -46,21 +48,19 @@ const ProductsIndex: React.FC<ProductsIndexProps> = ({ products: initialProducts
   };
 
   const handleSave = (updatedProduct: Product) => {
-    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+    setProducts(prevProducts => {
+      const index = prevProducts.findIndex(p => p.id === updatedProduct.id);
+      if (index !== -1) {
+        // Update existing product
+        const newProducts = [...prevProducts];
+        newProducts[index] = updatedProduct;
+        return newProducts;
+      } else {
+        // Add new product
+        return [...prevProducts, updatedProduct];
+      }
+    });
     setEditModalOpen(false);
-  };
-
-  const handleConfirmDelete = () => {
-    if (selectedProduct) {
-      destroy(route('products.destroy', selectedProduct.id), {
-        preserveState: true,
-        preserveScroll: true,
-        onSuccess: () => {
-          setProducts(products.filter(p => p.id !== selectedProduct.id));
-          setDeleteModalOpen(false);
-        },
-      });
-    }
   };
 
   return (
@@ -70,7 +70,7 @@ const ProductsIndex: React.FC<ProductsIndexProps> = ({ products: initialProducts
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold text-gray-800">Lista de Productos</h1>
           <button
-            onClick={() => handleEdit({ id: 0 } as Product)} // Passing an empty product for creation
+            onClick={() => handleEdit({ id: 0 } as Product)}
             className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-300"
           >
             Agregar Producto
@@ -142,7 +142,6 @@ const ProductsIndex: React.FC<ProductsIndexProps> = ({ products: initialProducts
             isOpen={deleteModalOpen}
             onClose={() => setDeleteModalOpen(false)}
             product={selectedProduct}
-            onConfirm={handleConfirmDelete}
           />
         </>
       )}
@@ -151,3 +150,4 @@ const ProductsIndex: React.FC<ProductsIndexProps> = ({ products: initialProducts
 };
 
 export default ProductsIndex;
+

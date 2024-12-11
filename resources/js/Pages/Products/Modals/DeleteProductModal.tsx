@@ -9,18 +9,16 @@ interface DeleteProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product;
-  onConfirm: () => void;
 }
 
-const DeleteProductModal: React.FC<DeleteProductModalProps> = ({ isOpen, onClose, product, onConfirm }) => {
+const DeleteProductModal: React.FC<DeleteProductModalProps> = ({ isOpen, onClose, product }) => {
   const handleDelete = () => {
     router.delete(route('products.destroy', product.id), {
-      preserveState: true,
-      preserveScroll: true,
+      preserveState: false,
+      preserveScroll: false,
       onSuccess: () => {
-        onConfirm();
-        onClose();
         toast.success('Producto eliminado con éxito');
+        onClose();
       },
       onError: (errors) => {
         toast.error('Hubo un error al eliminar el producto. Por favor, intente de nuevo.');
@@ -97,4 +95,3 @@ const DeleteProductModal: React.FC<DeleteProductModalProps> = ({ isOpen, onClose
 };
 
 export default DeleteProductModal;
-
