@@ -65,4 +65,4 @@ RUN echo "server { \
 EXPOSE 80
 
 # Start NGINX and PHP-FPM
-CMD sh -c "nginx -g 'daemon off;' & php-fpm"
+CMD ["sh", "/var/www/start.sh"]
